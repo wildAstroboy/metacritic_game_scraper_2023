@@ -1,0 +1,116 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+## Install packages
+
+```{r}
+install.packages('tidyverse')
+install.packages('skimr')
+library('tidyverse')
+library('skimr')
+```
+
+## Read Data
+
+```{r}
+data = read_csv('rawMetaCriticData_2018_2022.csv', show_col_types = FALSE)
+```
+
+## Summary of Data
+
+```{r}
+summary(data)
+```
+
+## Summary of data
+
+Changed the class userscore from char to numeric. Changed the format of the date.
+
+```{r}
+data$userscore <- as.numeric(data$userscore)
+data$date <- mdy(data$date)
+summary(data)
+```
+
+List of unique values in the platform column.
+
+```{r}
+unique(data["platform"])
+```
+
+```{r}
+data %>% 
+  ggplot(aes(x=metascore)) + 
+  geom_histogram(fill = "lightgreen", color = "black", bins = 50) + 
+  ggtitle("Distribution of Metascores")
+```
+
+```{r}
+data %>% 
+  ggplot(aes(x=metascore, y=date)) + 
+  geom_bin2d() + 
+  scale_fill_continuous(low = "darkblue", high = "yellow") +
+  ggtitle("Distribution of Metascore by date")
+```
+
+```{r}
+userscore_data <- data[!is.na(data$userscore), ]
+userscore_data %>%
+  ggplot(aes(x=userscore*10)) + 
+  geom_histogram(fill = "lightblue", color = "black", bins = 50) + 
+  ggtitle("Distribution of Userscores")
+```
+
+```{r}
+userscore_data %>% 
+  ggplot(aes(x=userscore*10, y=date)) + 
+  geom_bin2d() +
+  scale_fill_continuous(low = "darkblue", high = "yellow") +
+  ggtitle("Distribution of Userscores by date")
+```
+
+```{r}
+data %>% 
+  ggplot(aes(x=platform)) + geom_bar(fill = "violet", color = "black") + 
+  theme(axis.text.x = element_text(size = 6)) + 
+  ggtitle("Quantity by Platform") + 
+  scale_y_sqrt()
+```
+
+```{r}
+data %>% 
+  ggplot(aes(x = metascore)) + 
+  geom_histogram(fill = "orange", color = "black", bins = 50) + 
+  facet_wrap(~platform) + 
+  theme(panel.spacing = unit(1, "lines")) + 
+  ggtitle("Distribution of Metascores by Platform")
+```
+
+```{r}
+data %>% 
+  ggplot(aes(x=metascore, y=date)) + 
+  geom_bin2d() + 
+  scale_fill_continuous(low = "darkblue", high = "yellow") +
+  ggtitle("Distribution of Metascore by platform & date") +
+  facet_wrap(~platform)
+```
+
+```{r}
+userscore_data %>% 
+  ggplot(aes(x = userscore)) + 
+  geom_histogram(fill = "orange", color = "black", bins = 50) + 
+  facet_wrap(~platform) + 
+  theme(panel.spacing = unit(1, "lines")) +
+  ggtitle("Distribution of Userscores by Platform")
+```
+
+```{r}
+userscore_data %>% 
+  ggplot(aes(x=userscore*10, y=date)) + 
+  geom_bin2d() +
+  scale_fill_continuous(low = "darkblue", high = "yellow") +
+  ggtitle("Distribution of Userscores by platform & date") + 
+  facet_wrap(~platform)
+```
